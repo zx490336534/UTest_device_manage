@@ -59,22 +59,21 @@ class DeviceViewSet(ModelViewSet):
         device_info_objs = self.queryset
         if device_ip:
             # 根据设备IP查找,返回一个
-            device_info_objs = Device_info.objects.filter(is_delete=False, device_ip=device_ip).first()
+            device_info_objs = self.queryset.filter(device_ip=device_ip).first()
         elif device_name:
             # 根据设备名称查找,返回全部
-            device_info_objs = Device_info.objects.filter(is_delete=False, device_name=device_name).all()
+            device_info_objs = self.queryset.filter(device_name=device_name).all()
         elif type:
             if type == 'daily':
                 # 每日编译状态为0 且设备使用状态为0,返回一个
-                device_info_objs = Device_info.objects.filter(is_delete=False, daily_status=0, use_status=0).first()
+                device_info_objs = self.queryset.filter(daily_status=0, use_status=0).first()
             elif type == 'tool':
                 # 有工装IP 同一工装电脑下设备使用状态为0,返回全部
-                device_info_objs = Device_info.objects.filter(is_delete=False,
-                                                              tool_ip__isnull=False,
-                                                              use_status=0).all()
+                device_info_objs = self.queryset.filter(tool_ip__isnull=False,
+                                                        use_status=0).all()
             elif type == 'unuse':
                 # 任意非使用状态的设备,返回全部
-                device_info_objs = Device_info.objects.filter(is_delete=False, use_status=0).all()
+                device_info_objs = self.queryset.filter(is_delete=False, use_status=0).all()
         else:
             return Response({'error': '请使用正确的查询方式'})
         serializer = self.get_serializer(device_info_objs, many=False)

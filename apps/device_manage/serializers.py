@@ -25,6 +25,12 @@ class DeviceModelSerializer(serializers.ModelSerializer):
             },
             'use_status': {
                 'read_only': True
-            }
+            },
+            'tool_ip': {
+                'allow_null': True
+            },
+            'tool_pc_ip': {
+                'allow_null': True
+            },
 
         }

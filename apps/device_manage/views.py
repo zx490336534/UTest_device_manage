@@ -80,10 +80,14 @@ class DeviceViewSet(ModelViewSet):
                 else:
                     return Response({'status': -1, 'error': '没有空闲的工装设备'})
             elif type == 'unuse':
-                # 任意非使用状态的设备,返回全部
-                device_info_objs = self.queryset.filter(is_delete=False, use_status=0).all()
+                # 任意非使用状态的普通设备,返回全部
+                device_info_objs = self.queryset.filter(is_delete=False, use_status=0).filter(tool_pc_ip='').filter(
+                    tool_ip='').all()
         else:
             return Response({'error': '请使用正确的查询方式'})
-        serializer = self.get_serializer(device_info_objs, many=True)
+        if device_ip or type == 'daily':
+            serializer = self.get_serializer(device_info_objs, many=False)
+        else:
+            serializer = self.get_serializer(device_info_objs, many=True)
         new_data = get_count_by_device_info(serializer.data)
         return Response(new_data)

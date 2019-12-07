@@ -184,3 +184,8 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 
 }
+
+# 收集静态文件
+# 1. 在项目根路径下创建static文件夹
+# 2. 执行收集命令 python manage.py collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'front_ends/static')

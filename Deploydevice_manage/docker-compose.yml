@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+    db:
+      image: mariadb
+      command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      volumes: 
+        - mysql_db:/var/lib/mysql
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: pythonvip
+        MYSQL_DATABASE: test
+
+    django_app:
+      depends_on:
+          - db
+      build: ./django_app_docker
+      image: zhongxin1111/device_manage
+      restart: always
+      volumes: 
+        - logs:/usr/src/app/logs
+        - django_code:/usr/src/app/UTest_device_manage/
+    web:
+      depends_on: 
+        - django_app
+      build: ./nginx_docker
+      image: zhongxin1111/device_manage_nginx
+      restart: always
+      ports:
+        - "8866:80"
+        - "8000:8000"
+      volumes: 
+        - logs:/var/log/nginx/
+
+volumes:
+    mysql_db:
+    django_code:
+    logs:

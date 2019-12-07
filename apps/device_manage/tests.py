@@ -50,7 +50,7 @@ def create_data(num):
 
 
 if __name__ == '__main__':
-    # create_data(30)
+    # create_data(1)
     get_status(type=1)
     get_status(type=2)
     get_status(type=3)

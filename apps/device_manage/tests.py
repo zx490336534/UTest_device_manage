@@ -23,6 +23,16 @@ def get_status(type=1):
     print(response.json())
 
 
+def use(use_status=1):
+    data = {
+        'device_ip': '203.1.4.10',
+        'use_status': use_status,
+        'daily_status': 0
+    }
+    response = requests.post(f'{base_url}use/', json=data)
+    print(response.json())
+
+
 def create_data(num):
     for i in range(num):
         fake = Faker(locale='zh_CN')
@@ -46,3 +56,6 @@ if __name__ == '__main__':
     get_status(type=3)
     get_status(type=4)
     get_status(type=5)
+    use(use_status=0)
+    use(use_status=1)
+    use(use_status='123')

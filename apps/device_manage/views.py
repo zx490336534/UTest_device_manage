@@ -5,6 +5,7 @@ from django.db.models import Count, Q
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
 from .utils import get_count_by_device_info
 from . import serializers
 from .models import Device_info
@@ -48,6 +49,11 @@ class DeviceViewSet(ModelViewSet):
     def status(self, request):
         """
         获取设备状态
+        {
+            "device_ip":"",
+            "device_name":"",
+            "type":"daily/tool/unuse"
+        }
         """
         data = request.data
         device_ip = data.get('device_ip')
@@ -84,10 +90,33 @@ class DeviceViewSet(ModelViewSet):
                 device_info_objs = self.queryset.filter(is_delete=False, use_status=0).filter(tool_pc_ip='').filter(
                     tool_ip='').all()
         else:
-            return Response({'error': '请使用正确的查询方式'})
+            return Response({'status': -1, 'error': '请使用正确的查询方式'})
         if device_ip or type == 'daily':
             serializer = self.get_serializer(device_info_objs, many=False)
         else:
             serializer = self.get_serializer(device_info_objs, many=True)
         new_data = get_count_by_device_info(serializer.data)
         return Response(new_data)
+
+    @action(methods=['post'], detail=False)
+    def use(self, request, *args, **kwargs):
+        """
+        修改设备使用状态
+        {
+            "device_ip":'',
+            "use_status":0或1,
+            "daily_status":0或1
+        }
+        """
+        data = request.data
+        device_ip = data.get('device_ip')
+        use_status = data.get('use_status')
+        daily_status = data.get('daily_status')
+        device_info = self.queryset.filter(device_ip=device_ip).first()
+        if use_status in [0, 1] and daily_status in [0, 1]:
+            device_info.use_status = use_status
+            device_info.save()
+            serializer = serializers.DeviceModelSerializer(instance=device_info)
+            return Response(serializer.data)
+        else:
+            return Response({'status': -1, 'error': 'use_status和daily_status只能为0或1'})

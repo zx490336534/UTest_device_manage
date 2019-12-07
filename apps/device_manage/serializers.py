@@ -34,3 +34,9 @@ class DeviceModelSerializer(serializers.ModelSerializer):
             },
 
         }
+
+
+class ChangeUseModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Device_info
+        fields = ('device_ip', 'use_status')
